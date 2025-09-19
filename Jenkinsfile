@@ -33,21 +33,22 @@ pipeline {
       }
     }
 
-  stage('SonarQube Analysis') {
+stage('SonarQube Analysis') {
   steps {
-    sh '''
-      # install the scanner CLI
-      npm install -g sonarqube-scanner
-
-      # run the scan against SonarCloud
-      sonar-scanner \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.token=5ebd69101a3f8b3854bdef41e8829782ae69d61 \
-        -Dsonar.projectKey=Dhom-059_8.2CDevSecOps \
-        -Dsonar.organization=dhom-059
-    '''
+    withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+      sh '''
+        npm install -g sonarqube-scanner
+        sonar-scanner \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.token=${SONAR_TOKEN} \
+          -Dsonar.projectKey=Dhom-059_8.2CDevSecOps \
+          -Dsonar.organization=dhom-059 \
+          -Dsonar.sources=.
+      '''
+    }
   }
 }
+
   }
 }
 
